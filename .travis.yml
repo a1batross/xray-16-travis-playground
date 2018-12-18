@@ -1,16 +1,20 @@
-# Based on https://github.com/ldionne/hana/blob/master/.travis.yml
-dist: xenial
-# use containers, instead of VMs
-sudo: false
-cache: ccache
 language: cpp
-
+cache: ccache
+sudo: false
+dist: xenial
 os:
-- linux
+  - linux
+git:
+  depth: 10
+  submodules: true
 
 matrix:
   include:
-    - env: C_COMPILER=gcc-7 CXX_COMPILER=g++-7 TARGET_CPU=x64 BUILD_CONFIGURATION=Release
+    - os: linux
+      env: 
+        - C_COMPILER=gcc-7
+        - CXX_COMPILER=g++-7
+        - BUILD_CONFIGURATION=Release
       addons: &gcc7_amd64
         apt:
           sources:
@@ -31,11 +35,26 @@ matrix:
             - libglew-dev
             - liblzo2-dev
             - libjpeg-dev
+            - libsdl2-dev
             - libtbb-dev
             - libssl-dev
             - libogg-dev
-    
-    - env: C_COMPILER=gcc-7 CXX_COMPILER=g++-7 TARGET_CPU=x86 BUILD_CONFIGURATION=Release
+
+    - os: linux
+      env: 
+        - C_COMPILER=gcc-7
+        - CXX_COMPILER=g++-7
+        - BUILD_CONFIGURATION=Debug
+      addons: *gcc7_amd64
+
+    - os: linux
+      env: 
+        - C_COMPILER=gcc-7
+        - CXX_COMPILER=g++-7
+        - CFLAGS="-m32"
+        - CXXFLAGS="-m32"
+        - ASMFLAGS="-m32"
+        - BUILD_CONFIGURATION=Release
       addons: &gcc7_i386
         apt:
           sources:
@@ -58,37 +77,36 @@ matrix:
             - libglew-dev:i386
             - liblzo2-dev:i386
             - libjpeg-dev:i386
+            - libsdl2-dev:i386
             - libtbb-dev:i386
             - libssl-dev:i386
             - libogg-dev:i386
             - gcc-multilib
-            - g++-multilib
+            - g++-7-multilib
 
-    - env: C_COMPILER=gcc-7 CXX_COMPILER=g++-7 TARGET_CPU=x64 BUILD_CONFIGURATION=Debug
-      addons: *gcc7 *amd64
-
-    - env: C_COMPILER=gcc-7 CXX_COMPILER=g++-7 TARGET_CPU=x86 BUILD_CONFIGURATION=Debug
-      addons: *gcc7 *i386
-
-install:
-  - export CC=${C_COMPILER}
-  - export CXX=${CXX_COMPILER}
-  - ${CXX} --version
+    - os: linux
+      env: 
+        - C_COMPILER=gcc-7
+        - CXX_COMPILER=g++-7
+        - CFLAGS="-m32"
+        - CXXFLAGS="-m32"
+        - ASMFLAGS="-m32"
+        - BUILD_CONFIGURATION=Debug
+      addons: *gcc7_i386
 
 before_script:
-  - export core_count=$(nproc || echo 4) && echo core_count = $core_count
+  - export CC=$C_COMPILER
+  - export CXX=$CXX_COMPILER
   - mkdir bin
   - cd bin
-  - if [ $TARGET_CPU == x64 ]; then
-       cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION;
-    fi
-
-  - if [ $TARGET_CPU == x86 ]; then
-       CFLAGS="-m32 -march=native" CXXFLAGS="-m32 -march=native" cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION -DCMAKE_ASM_FLAGS=-m32;
-    fi
+  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION
 
 script:
-- if [ $TRAVIS_OS_NAME == linux ]; then make -j $core_count && file src/xrCore/xrCore.so; fi
+  - export core_count=$(nproc || echo 4) && echo core_count = $core_count
+  - cmake --build . -j $core_count
+
+after_script:
+  - ccache --show-stats
 
 notifications:
   email: false
