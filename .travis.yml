@@ -39,7 +39,7 @@ matrix:
             - libtbb-dev
             - libssl-dev
             - libogg-dev
-            - ninja
+            - ninja-build
 
     - os: linux
       env: 
@@ -84,7 +84,7 @@ matrix:
             - libogg-dev:i386
             - gcc-multilib
             - g++-7-multilib
-            - ninja
+            - ninja-build
 
     - os: linux
       env: 
@@ -104,7 +104,7 @@ before_script:
   - cmake .. -GNinja -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION
 
 script:
-  - export core_count=$(nproc || echo 4) && echo core_count = $core_count
+  - export core_count=$(nproc || echo 2) && echo core_count = $core_count
   - cmake --build . -j $core_count
 
 after_script:
