@@ -39,6 +39,7 @@ matrix:
             - libtbb-dev
             - libssl-dev
             - libogg-dev
+            - ninja
 
     - os: linux
       env: 
@@ -51,8 +52,8 @@ matrix:
       env: 
         - C_COMPILER=gcc-7
         - CXX_COMPILER=g++-7
-        - CFLAGS="-m32"
-        - CXXFLAGS="-m32"
+        - CFLAGS="-m32 -msse -msse2"
+        - CXXFLAGS="-m32 -msse -msse2"
         - ASMFLAGS="-m32"
         - BUILD_CONFIGURATION=Release
       addons: &gcc7_i386
@@ -83,13 +84,14 @@ matrix:
             - libogg-dev:i386
             - gcc-multilib
             - g++-7-multilib
+            - ninja
 
     - os: linux
       env: 
         - C_COMPILER=gcc-7
         - CXX_COMPILER=g++-7
-        - CFLAGS="-m32"
-        - CXXFLAGS="-m32"
+        - CFLAGS="-m32 -msse -msse2"
+        - CXXFLAGS="-m32 -msse -msse2"
         - ASMFLAGS="-m32"
         - BUILD_CONFIGURATION=Debug
       addons: *gcc7_i386
@@ -99,7 +101,7 @@ before_script:
   - export CXX=$CXX_COMPILER
   - mkdir bin
   - cd bin
-  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION
+  - cmake .. -GNinja -DCMAKE_BUILD_TYPE=$BUILD_CONFIGURATION
 
 script:
   - export core_count=$(nproc || echo 4) && echo core_count = $core_count
