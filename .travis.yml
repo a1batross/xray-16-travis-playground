@@ -5,114 +5,70 @@ sudo: false
 cache: ccache
 language: cpp
 
-git:
-  depth: 1
-  submodules: true
-
-#branches:
-#  only:
-#  - linux
-#  - xd_dev
-#  - "/^v\\d+\\./"
-
 os:
 - linux
-
-addons: &amd64
-  apt:
-    packages:
-      - libgles2-mesa-dev
-      - libegl1-mesa-dev
-      - libfreeimage-dev
-      - libcrypto++-dev
-      - liblockfile-dev
-      - liblua5.1-0-dev
-      - libncurses5-dev
-      - libpugixml-dev
-      - libopenal-dev
-      - libtheora-dev
-      - libvorbis-dev
-      - libglew-dev
-      - liblzo2-dev
-      - libjpeg-dev
-      - libtbb-dev
-      - libssl-dev
-      - libogg-dev
-
-addons: &i386
-  apt:
-    packages:
-      - libgles2-mesa-dev:i386
-      - libegl1-mesa-dev:i386
-      - libfreeimage-dev:i386
-      - libcrypto++-dev:i386
-      - liblockfile-dev:i386
-      - liblua5.1-0-dev:i386
-      - libncurses5-dev:i386
-      - libglib2.0-dev:i386
-      - libpugixml-dev:i386
-      - libopenal-dev:i386
-      - libtheora-dev:i386
-      - libvorbis-dev:i386
-      - libpulse-dev:i386
-      - libglew-dev:i386
-      - liblzo2-dev:i386
-      - libjpeg-dev:i386
-      - libtbb-dev:i386
-      - libssl-dev:i386
-      - libogg-dev:i386
-      - gcc-multilib
-      - g++-multilib
-
-addons: &gcc7
-  apt:
-    sources:
-      - sourceline: 'ppa:ubuntu-toolchain-r/test'
-    packages:
-      - g++-7
-      
-#addons: &clang50
-#  apt:
-#    sources:
-#      - llvm-toolchain-trusty-5.0
-#    packages:
-#      - clang-5.0
-
-#addons: &clang60
-#  apt:
-#    sources:
-#      - llvm-toolchain-trusty-6.0
-#    packages:
-#      - clang-6.0
-
-
 
 matrix:
   include:
     - env: C_COMPILER=gcc-7 CXX_COMPILER=g++-7 TARGET_CPU=x64 BUILD_CONFIGURATION=Release
-      addons: *gcc7 *amd64
+      addons: &gcc7_amd64
+        apt:
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - g++-7
+            - libgles2-mesa-dev
+            - libegl1-mesa-dev
+            - libfreeimage-dev
+            - libcrypto++-dev
+            - liblockfile-dev
+            - liblua5.1-0-dev
+            - libncurses5-dev
+            - libpugixml-dev
+            - libopenal-dev
+            - libtheora-dev
+            - libvorbis-dev
+            - libglew-dev
+            - liblzo2-dev
+            - libjpeg-dev
+            - libtbb-dev
+            - libssl-dev
+            - libogg-dev
     
     - env: C_COMPILER=gcc-7 CXX_COMPILER=g++-7 TARGET_CPU=x86 BUILD_CONFIGURATION=Release
-      addons: *gcc7 *i386
+      addons: &gcc7_i386
+        apt:
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - g++-7
+            - libgles2-mesa-dev:i386
+            - libegl1-mesa-dev:i386
+            - libfreeimage-dev:i386
+            - libcrypto++-dev:i386
+            - liblockfile-dev:i386
+            - liblua5.1-0-dev:i386
+            - libncurses5-dev:i386
+            - libglib2.0-dev:i386
+            - libpugixml-dev:i386
+            - libopenal-dev:i386
+            - libtheora-dev:i386
+            - libvorbis-dev:i386
+            - libpulse-dev:i386
+            - libglew-dev:i386
+            - liblzo2-dev:i386
+            - libjpeg-dev:i386
+            - libtbb-dev:i386
+            - libssl-dev:i386
+            - libogg-dev:i386
+            - gcc-multilib
+            - g++-multilib
 
     - env: C_COMPILER=gcc-7 CXX_COMPILER=g++-7 TARGET_CPU=x64 BUILD_CONFIGURATION=Debug
       addons: *gcc7 *amd64
 
     - env: C_COMPILER=gcc-7 CXX_COMPILER=g++-7 TARGET_CPU=x86 BUILD_CONFIGURATION=Debug
       addons: *gcc7 *i386
-
-#    - env: C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET_CPU=x64 BUILD_CONFIGURATION=Release
-#      addons: *clang50 *amd64
-
-#    - env: C_COMPILER=clang-5.0 CXX_COMPILER=clang++-5.0 TARGET_CPU=x84 BUILD_CONFIGURATION=Release
-#      addons: *clang50 *i386
-
-#    - env: C_COMPILER=clang-6.0 CXX_COMPILER=clang++-6.0 TARGET_CPU=x64 BUILD_CONFIGURATION=Release
-#      addons: *clang60 *amd64
-
-#    - env: C_COMPILER=clang-6.0 CXX_COMPILER=clang++-6.0 TARGET_CPU=x84 BUILD_CONFIGURATION=Release
-#      addons: *clang60 *i386
-
 
 install:
   - export CC=${C_COMPILER}
