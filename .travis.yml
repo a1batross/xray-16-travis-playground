@@ -20,7 +20,7 @@ os:
 
 addons: &amd64
   apt:
-    sources:
+    packages:
       - libgles2-mesa-dev
       - libegl1-mesa-dev
       - libfreeimage-dev
@@ -41,7 +41,7 @@ addons: &amd64
 
 addons: &i386
   apt:
-    sources:
+    packages:
       - libgles2-mesa-dev:i386
       - libegl1-mesa-dev:i386
       - libfreeimage-dev:i386
