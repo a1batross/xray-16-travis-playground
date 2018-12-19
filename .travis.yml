@@ -8,6 +8,10 @@ git:
   depth: 10
   submodules: true
 
+env:
+  global:
+    - CCACHE_SLOPPINESS=pch_defines,time_macros
+
 matrix:
   include:
     - os: linux
